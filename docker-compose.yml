@@ -10,14 +10,29 @@ services:
     ports:
       - "8081:8000"
     environment:
-      # Example environment variables for local MySQL connection
-      DATABASE_URL: mysql+pymysql://user:password@host.docker.internal:3306/your_database
       PYTHONUNBUFFERED: "1"
     volumes:
-      # Uncomment for local development with hot-reload
       - ./backend:/app
     command: >
       uvicorn app.main:app
       --host 0.0.0.0
       --port 8000
       --reload
+
+  kira_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: kira_frontend_app
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: "http://localhost:8081"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: >
+      npm run dev -- --host 0.0.0.0 --port 5173
+    depends_on:
+      - kira_backend
