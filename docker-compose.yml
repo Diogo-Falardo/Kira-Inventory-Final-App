@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  kira_backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kira_backend_final_app
+    restart: unless-stopped
+    ports:
+      - "8081:8000"
+    environment:
+      # Example environment variables for local MySQL connection
+      DATABASE_URL: mysql+pymysql://user:password@host.docker.internal:3306/your_database
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      # Uncomment for local development with hot-reload
+      - ./backend:/app
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
