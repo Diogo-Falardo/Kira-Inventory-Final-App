@@ -138,6 +138,7 @@ export function NavUser({
               hover:text-neutral-100 
               transition-colors
             "
+                onClick={() => navigate({ to: "/userpanel/userprofile" })}
               >
                 <User className="h-4 w-4 text-neutral-400" />
                 <span>Profile</span>
@@ -167,3 +168,4 @@ export function NavUser({
     </SidebarMenu>
   );
 }
+

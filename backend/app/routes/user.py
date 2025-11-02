@@ -18,7 +18,7 @@ from app.utils import user_helper
 from app.utils.exceptions import THROW_ERROR
 
 # schemas
-from app.models.schemas.user_schema import AdvancedUsersProfileBase, AdvancedUsersProfileOut, UserChangePassword,UserOut
+from app.models.schemas.user_schema import AdvancedUsersProfileBase, AdvancedUsersProfileOut, UserChangePassword,UserOut, UserChangeEmail
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -40,9 +40,11 @@ def user_profile(
 
     for item, value in data.items():
         if item == "username":
-            if user_service.username_finder(value,db):
-                user_helper.validate_username(value)
+            user_helper.validate_username(value)
+            existing_user = user_service.username_finder(value, db)
+            if existing_user and existing_user.user_id != user_id:
                 THROW_ERROR("Username already in use!", 400)
+
         elif item == "avatar_url":
                 user_helper.validate_avatar_url(value)
         elif item == "address":
@@ -55,14 +57,13 @@ def user_profile(
     return user_service.update_user_profile(user, data, db)
 
 # change email
-@router.put("/change-email", response_model=UserOut, name="changeUserEmail")
+@router.put("/change-email/", response_model=UserOut, name="changeUserEmail")
 def change_email(
-    email: str,
+    payload: UserChangeEmail,
     user_id = Depends(validate_user_token),
     db: Session = Depends(get_db)
 ):
-    user_helper.validate_email(email)
-
+    email = payload.email
     user = user_service.get_user_from_id(user_id, db)
     if user.email == email:
         THROW_ERROR("Cant update your email to the same email!",400)
@@ -73,7 +74,7 @@ def change_email(
     return user_service.update_email(email, user_id, db)
 
 # change password
-@router.put("/change-password", response_model=UserOut, name="changeUserPassword")
+@router.put("/change-password/", response_model=UserOut, name="changeUserPassword")
 def change_password(
     payload: UserChangePassword,
     user_id = Depends(validate_user_token),

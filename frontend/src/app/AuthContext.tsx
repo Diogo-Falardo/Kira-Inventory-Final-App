@@ -22,6 +22,7 @@ type AuthContextType = {
   login: (data: { access_token: string; refresh_token: string }) => void;
 
   logout: () => void;
+  refreshUser: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -85,6 +86,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("refresh_token");
   }
 
+  async function refreshUser() {
+    try {
+      const profile = await getUserLogged();
+      setUser(profile);
+    } catch {}
+  }
+
   const value: AuthContextType = {
     user,
     accessToken,
@@ -93,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isBootstrapping,
     login,
     logout,
+    refreshUser,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

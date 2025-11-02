@@ -119,12 +119,15 @@ def number_of_products_available(user_id: int, db: Session):
             total_price += product.available_stock * product.price
 
     return{
-        "available_stock": f"{available_stock}",
-        "total_price": f"{total_price}"
+        "available_stock": available_stock,
+        "total_price": total_price
     }
 
 def high_valued_products(user_id: int, db: Session):
     products = db.query(Product).filter(Product.user_id == user_id).all()
+
+    if len(products) < 3:
+        THROW_ERROR("You need at least 3 products to use this functionality!", 400)
 
     profitable = [product for product in products if product.price > product.cost]
 
@@ -143,6 +146,9 @@ def high_valued_products(user_id: int, db: Session):
 
 def low_valued_products(user_id: int, db: Session):
     products = db.query(Product).filter(Product.user_id == user_id).all()
+
+    if len(products) < 3:
+        THROW_ERROR("You need at least 3 products to use this functionality!", 400)
 
     non_profitable = [product for product in products if product.price <= product.cost]
 
@@ -168,15 +174,18 @@ def profit(user_id: int, db: Session):
     products_not_profitable = 0
     losses = []
     for product in products:
-        profit_value += product.price * product.available_stock
-        stock_cost += product.cost * product.available_stock
-        if product.cost > product.price:
-            products_not_profitable += 1
-            loss_amout = round(product.cost - product.price, 3)
-            losses.append({
-                "name": product.name,
-                "loss on each product": loss_amout
-            })
+        if product.cost is not None:
+            profit_value += product.price * product.available_stock
+            stock_cost += product.cost * product.available_stock
+            if product.cost > product.price:
+                products_not_profitable += 1
+                loss_amout = round(product.cost - product.price, 3)
+                losses.append({
+                    "name": product.name,
+                    "loss on each product": loss_amout
+                })
+
+    profit_value -= stock_cost
 
     return {"stock cost":stock_cost,"profit":profit_value,"losing_products": losses}
 

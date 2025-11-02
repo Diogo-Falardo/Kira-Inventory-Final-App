@@ -43,12 +43,15 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     pass
 
+class ProductDashboard(BaseModel):
+    pass
+
 
 # ---- Update (patch) ----
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
-    available_stock: Optional[int] | None 
+    available_stock: Optional[int] = None 
     price: Optional[Decimal] = None
     cost: Optional[Decimal] = None
     platform: Optional[str] = None
@@ -57,11 +60,14 @@ class ProductUpdate(BaseModel):
    
 # ---- Read/Out ----
 class ProductOut(ProductBase):
+    id: int
     created_at: datetime
     updated_at: datetime
     inactive: bool
 
     model_config = ConfigDict(from_attributes=True)
+
+
 
 # --- Delete ----
 class ProductDeleteOut(ProductBase):

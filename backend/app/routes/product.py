@@ -10,7 +10,7 @@ from app.core.session import get_db
 from app.core.security import validate_user_token
 
 # schemas
-from app.models.schemas.product_schema import ProductCreate,ProductUpdate,ProductOut
+from app.models.schemas.product_schema import ProductCreate,ProductUpdate,ProductOut, ProductDashboard
 
 # utils
 # exceptions
@@ -117,6 +117,43 @@ def user_products(
     order: Order = Query(Order.desc),
 ):
     return product_service.all_products(user_id, db, order)
+
+
+# dashboard all in one
+@router.get("/dashboard", name="productsDashboard")
+def product_dashboard(
+    low_stock_threshold: int = 5,
+    user_id = Depends(validate_user_token),
+    db: Session = Depends(get_db),
+):
+    
+    products = product_service.all_products(user_id, db, Order.asc)
+
+    products_available = product_service.number_of_products_available(user_id, db)
+    products_profit = product_service.profit(user_id,db)
+    products_low_stock = product_service.low_stock_products(low_stock_threshold,user_id,db)
+
+    if len(products) == 0:
+        return {
+            "No products": "Add some stock!!"
+        }
+    elif len(products) < 3:
+        return {
+            "products_available": products_available,
+            "products_profit": products_profit,
+            "low_stock": products_low_stock,
+        }
+    else: 
+        products_top = product_service.high_valued_products(user_id, db)
+        products_worst = product_service.low_valued_products(user_id, db)
+        return {
+            "products_available": products_available,
+            "products_profit": products_profit,
+            "low_stock": products_low_stock,
+            "products_top":products_top,
+            "products_worst": products_worst
+        }
+    
 
 # stock stats and price of all
 @router.get("/products-available/", response_model=dict, name="productsAvailable")

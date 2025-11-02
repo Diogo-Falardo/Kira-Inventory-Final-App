@@ -36,3 +36,22 @@ services:
       npm run dev -- --host 0.0.0.0 --port 5173
     depends_on:
       - kira_backend
+
+  kira_svelte:
+    build:
+      context: ./svelte
+      dockerfile: Dockerfile
+    container_name: kira_svelte_app
+    restart: unless-stopped
+    ports:
+      - "5174:5173"
+    environment:
+      PUBLIC_API_BASE_URL: "http://localhost:8081"
+      CHOKIDAR_USEPOLLING: "1"
+    volumes:
+      - ./svelte:/app
+      - /app/node_modules
+    command: >
+      npm run dev -- --host 0.0.0.0 --port 5173
+    depends_on:
+      - kira_backend

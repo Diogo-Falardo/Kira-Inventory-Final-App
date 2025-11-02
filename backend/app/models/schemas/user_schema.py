@@ -57,6 +57,15 @@ class UserLogin(BaseModel):
     
 
 # ---- Update (patch) ----
+class UserChangeEmail(BaseModel):
+    email: EmailStr
+    
+    @field_validator("email", mode="before")
+    @classmethod
+    def _email(cls, email):
+        return user_helper.validate_email(email)
+
+
 
 class UserChangePassword(BaseModel):
     password: str

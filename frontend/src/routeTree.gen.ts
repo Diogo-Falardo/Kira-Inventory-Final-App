@@ -13,7 +13,9 @@ import { Route as UserpanelRouteImport } from './routes/userpanel'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserpanelIndexRouteImport } from './routes/userpanel/index'
+import { Route as UserpanelUserprofileRouteImport } from './routes/userpanel/userprofile'
 import { Route as UserpanelUserproductRouteImport } from './routes/userpanel/userproduct'
+import { Route as UserpanelUserdashboardRouteImport } from './routes/userpanel/userdashboard'
 
 const UserpanelRoute = UserpanelRouteImport.update({
   id: '/userpanel',
@@ -35,9 +37,19 @@ const UserpanelIndexRoute = UserpanelIndexRouteImport.update({
   path: '/',
   getParentRoute: () => UserpanelRoute,
 } as any)
+const UserpanelUserprofileRoute = UserpanelUserprofileRouteImport.update({
+  id: '/userprofile',
+  path: '/userprofile',
+  getParentRoute: () => UserpanelRoute,
+} as any)
 const UserpanelUserproductRoute = UserpanelUserproductRouteImport.update({
   id: '/userproduct',
   path: '/userproduct',
+  getParentRoute: () => UserpanelRoute,
+} as any)
+const UserpanelUserdashboardRoute = UserpanelUserdashboardRouteImport.update({
+  id: '/userdashboard',
+  path: '/userdashboard',
   getParentRoute: () => UserpanelRoute,
 } as any)
 
@@ -45,13 +57,17 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/userpanel': typeof UserpanelRouteWithChildren
+  '/userpanel/userdashboard': typeof UserpanelUserdashboardRoute
   '/userpanel/userproduct': typeof UserpanelUserproductRoute
+  '/userpanel/userprofile': typeof UserpanelUserprofileRoute
   '/userpanel/': typeof UserpanelIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/userpanel/userdashboard': typeof UserpanelUserdashboardRoute
   '/userpanel/userproduct': typeof UserpanelUserproductRoute
+  '/userpanel/userprofile': typeof UserpanelUserprofileRoute
   '/userpanel': typeof UserpanelIndexRoute
 }
 export interface FileRoutesById {
@@ -59,7 +75,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/userpanel': typeof UserpanelRouteWithChildren
+  '/userpanel/userdashboard': typeof UserpanelUserdashboardRoute
   '/userpanel/userproduct': typeof UserpanelUserproductRoute
+  '/userpanel/userprofile': typeof UserpanelUserprofileRoute
   '/userpanel/': typeof UserpanelIndexRoute
 }
 export interface FileRouteTypes {
@@ -68,16 +86,26 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/userpanel'
+    | '/userpanel/userdashboard'
     | '/userpanel/userproduct'
+    | '/userpanel/userprofile'
     | '/userpanel/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/userpanel/userproduct' | '/userpanel'
+  to:
+    | '/'
+    | '/auth'
+    | '/userpanel/userdashboard'
+    | '/userpanel/userproduct'
+    | '/userpanel/userprofile'
+    | '/userpanel'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/userpanel'
+    | '/userpanel/userdashboard'
     | '/userpanel/userproduct'
+    | '/userpanel/userprofile'
     | '/userpanel/'
   fileRoutesById: FileRoutesById
 }
@@ -117,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserpanelIndexRouteImport
       parentRoute: typeof UserpanelRoute
     }
+    '/userpanel/userprofile': {
+      id: '/userpanel/userprofile'
+      path: '/userprofile'
+      fullPath: '/userpanel/userprofile'
+      preLoaderRoute: typeof UserpanelUserprofileRouteImport
+      parentRoute: typeof UserpanelRoute
+    }
     '/userpanel/userproduct': {
       id: '/userpanel/userproduct'
       path: '/userproduct'
@@ -124,16 +159,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserpanelUserproductRouteImport
       parentRoute: typeof UserpanelRoute
     }
+    '/userpanel/userdashboard': {
+      id: '/userpanel/userdashboard'
+      path: '/userdashboard'
+      fullPath: '/userpanel/userdashboard'
+      preLoaderRoute: typeof UserpanelUserdashboardRouteImport
+      parentRoute: typeof UserpanelRoute
+    }
   }
 }
 
 interface UserpanelRouteChildren {
+  UserpanelUserdashboardRoute: typeof UserpanelUserdashboardRoute
   UserpanelUserproductRoute: typeof UserpanelUserproductRoute
+  UserpanelUserprofileRoute: typeof UserpanelUserprofileRoute
   UserpanelIndexRoute: typeof UserpanelIndexRoute
 }
 
 const UserpanelRouteChildren: UserpanelRouteChildren = {
+  UserpanelUserdashboardRoute: UserpanelUserdashboardRoute,
   UserpanelUserproductRoute: UserpanelUserproductRoute,
+  UserpanelUserprofileRoute: UserpanelUserprofileRoute,
   UserpanelIndexRoute: UserpanelIndexRoute,
 }
 
