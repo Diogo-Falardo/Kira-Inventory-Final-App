@@ -42,6 +42,8 @@
 		"vite": "^7.1.10"
 	},
 	"dependencies": {
-		"svelte-sonner": "^1.0.5"
+		"@tanstack/svelte-query": "^6.0.4",
+		"svelte-sonner": "^1.0.5",
+		"zod": "^4.1.12"
 	}
 }

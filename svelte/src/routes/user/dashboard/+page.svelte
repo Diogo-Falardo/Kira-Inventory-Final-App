@@ -47,7 +47,7 @@
   import {
     normalizeDashboardResponse,
     type DashboardNormalized,
-  } from '$lib/api/normalizeDashboard';
+  } from '$lib/api/normalizers/normalizeDashboard';
   import { apiFetch } from '$lib/api/api';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
@@ -84,11 +84,7 @@
     try {
       const raw = await apiFetch(`/product/dashboard?low_stock_threshold=${threshold}`);
 
-      console.log('URL sent:', `/product/dashboard?threshold=${threshold}`);
-      console.log('threshold value + typeof:', threshold, typeof threshold);
       const lowStockArr = Object.values((raw as any)?.low_stock ?? {})[0] as any[];
-      console.log('raw low_stock length:', lowStockArr?.length);
-      console.log('raw:', raw);
 
       data = normalizeDashboardResponse(raw);
       error = '';

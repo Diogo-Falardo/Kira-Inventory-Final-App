@@ -3,7 +3,6 @@
   import * as Avatar from '$lib/components/ui/avatar/index.js';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
   import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-  import { createEventDispatcher } from 'svelte';
 
   import { auth } from '$lib/auth/store';
 
@@ -12,8 +11,7 @@
   }: {
     user: { email: string; username?: string | null; name?: string | null; avatar?: string | null };
   } = $props();
-  const sidebar = Sidebar.useSidebar(); // para decidir o side no mobile
-  const dispatch = createEventDispatcher();
+  const sidebar = Sidebar.useSidebar();
 
   const displayName = (user?.username ?? user?.name ?? 'User') as string;
   const initial = displayName?.[0]?.toUpperCase() ?? '?';
@@ -90,7 +88,7 @@
 
         <DropdownMenu.Group>
           <DropdownMenu.Item class="cursor-pointer">
-            <a href="/userpanel/userprofile" class="flex w-full items-center gap-2">
+            <a href="/user/profile" class="flex w-full items-center gap-2">
               <UserIcon class="h-4 w-4 text-neutral-400" />
               <span>Profile</span>
             </a>

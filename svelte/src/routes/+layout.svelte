@@ -1,7 +1,9 @@
 <script lang="ts">
   import '../app.css';
   import favicon from '$lib/assets/favicon.svg';
-  import { onMount } from 'svelte';
+  // query client
+  import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+  const queryClient = new QueryClient();
   // toast
   import { Toaster } from 'svelte-sonner';
 
@@ -12,6 +14,7 @@
   <link rel="icon" href={favicon} />
 </svelte:head>
 
-{@render children()}
-
-<Toaster position="top-right" richColors />
+<QueryClientProvider client={queryClient}>
+  {@render children()}
+  <Toaster position="top-right" richColors />
+</QueryClientProvider>

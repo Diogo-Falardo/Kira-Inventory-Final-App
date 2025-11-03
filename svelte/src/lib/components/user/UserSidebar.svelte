@@ -12,18 +12,28 @@
     SidebarMenuItem,
     SidebarMenuButton,
   } from '$lib/components/ui/sidebar';
-
-  // temporary mock data (UI only)
-  const userInfo = {
-    email: 'demo@example.com',
-    username: 'DemoUser',
-    avatar: '/placeholder.svg',
-  };
+  //
+  import { useUser } from '$lib/api/hooks/useUser';
+  import { string } from 'zod';
+  import { goto } from '$app/navigation';
 
   const navItems = [
-    { name: 'Dashboard', url: '/userpanel/userDashboard', icon: LayoutDashboard },
-    { name: 'Products', url: '/userpanel/userProduct', icon: Package },
+    { name: 'Dashboard', url: '/user/dashboard', icon: LayoutDashboard },
+    { name: 'Products', url: '/user/products', icon: Package },
   ];
+
+  const { userQuery } = useUser();
+  let userInfo = $state<{ email: string; username: string; avatar: string } | null>(null);
+
+  $effect(() => {
+    if (userQuery.data) {
+      userInfo = {
+        email: userQuery.data.email,
+        username: userQuery.data.username ?? 'User',
+        avatar: userQuery.data.avatar ?? '',
+      };
+    }
+  });
 </script>
 
 <Sidebar collapsible="offcanvas" variant="inset">
@@ -43,12 +53,13 @@
       <SidebarGroupLabel>Free</SidebarGroupLabel>
       <SidebarMenu>
         {#each navItems as item (item.name)}
+          {@const Icon = item.icon}
           <SidebarMenuItem>
             <SidebarMenuButton class="cursor-pointer text-neutral-500">
-              <a href={item.url} class="flex items-center gap-2">
-                <svelte:component this={item.icon} />
+              <button onclick={() => goto(item.url)} class="flex items-center gap-2">
+                <Icon class="h-4 w-4" />
                 <span>{item.name}</span>
-              </a>
+              </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
         {/each}
@@ -57,6 +68,12 @@
   </SidebarContent>
 
   <SidebarFooter>
-    <NavUser user={userInfo} />
+    {#if userQuery.isLoading}
+      <div class="px-3 py-2 text-xs text-neutral-500">Loading user…</div>
+    {:else if userQuery.isError}
+      <div class="px-3 py-2 text-xs text-red-400">{userQuery.error.message}</div>
+    {:else if userInfo}
+      <NavUser user={userInfo} />
+    {/if}
   </SidebarFooter>
 </Sidebar>

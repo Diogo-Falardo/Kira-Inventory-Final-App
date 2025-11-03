@@ -72,3 +72,25 @@ export async function apiFetch<T = unknown>(
 
   return res.json();
 }
+
+import type { ZodError } from 'zod';
+
+/**
+ * Converts a ZodError into a single readable string.
+ */
+export function formatZodError(error: ZodError): string {
+  return error.issues.map((i) => `${i.path.join('.') || '_'}: ${i.message}`).join('; ');
+}
+
+/**
+ * Converts a ZodError into a record of { field: message }.
+ * Useful for showing field-level messages in forms.
+ */
+export function zodErrorToRecord(error: ZodError): Record<string, string> {
+  const record: Record<string, string> = {};
+  for (const issue of error.issues) {
+    const key = issue.path.join('.') || '_';
+    if (!record[key]) record[key] = issue.message; // first message wins
+  }
+  return record;
+}
