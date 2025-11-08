@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDashboard } from "@/app/hooks/useProduct";
 
-// shadcn
+
 import {
   Card,
   CardHeader,
@@ -35,11 +35,7 @@ import {
   RefreshCcw,
 } from "lucide-react";
 
-/* =========================================================
-   TIPOS (API NORMALIZADA) → representam o que o endpoint
-   getProductsDashboard retorna no FE após normalização.
-   (Se já os tens noutro ficheiro, podes importar.)
-   ========================================================= */
+
 type ApiProductsDashboard = {
   summary: {
     availableStock: number;
@@ -53,9 +49,7 @@ type ApiProductsDashboard = {
   worstProducts: Array<{ name: string; profit: number }>;
 };
 
-/* =========================================================
-   TIPOS (UI) → nomes pensados para a interface
-   ========================================================= */
+
 type LosingProduct = { name: string; lossPerItem: number };
 type ProfitRow = { name: string; profit: number };
 type LowStockRow = { name: string; stock: number };
@@ -63,10 +57,10 @@ type LowStockRow = { name: string; stock: number };
 type DashboardData = {
   summary: {
     availableStock: number;
-    totalPrice: number; // €
-    stockCost: number; // €
-    totalProfit: number; // €
-    capacityTarget?: number; // opcional (itens)—podes trazer de settings/API
+    totalPrice: number; 
+    stockCost: number; 
+    totalProfit: number; 
+    capacityTarget?: number; 
   };
   losingProducts: LosingProduct[];
   topLucrative: ProfitRow[];
@@ -74,10 +68,6 @@ type DashboardData = {
   lowStock: LowStockRow[];
 };
 
-/* =========================================================
-   MAPPER → converte o payload da API (normalizado) para
-   os nomes usados pela UI. Mantém a app desacoplada.
-   ========================================================= */
 function mapToDashboardData(api: ApiProductsDashboard): DashboardData {
   return {
     summary: {
@@ -85,7 +75,6 @@ function mapToDashboardData(api: ApiProductsDashboard): DashboardData {
       totalPrice: api.summary.totalPrice,
       stockCost: api.summary.stockCost,
       totalProfit: api.summary.totalProfit,
-      // podes preencher via API futuramente
       capacityTarget: undefined,
     },
     losingProducts: (api.losingProducts ?? []).map((p) => ({
@@ -101,9 +90,7 @@ function mapToDashboardData(api: ApiProductsDashboard): DashboardData {
   };
 }
 
-/* =========================================================
-   FORMATAÇÃO DE MOEDA
-   ========================================================= */
+
 const CURRENCY = new Intl.NumberFormat(undefined, {
   style: "currency",
   currency: "EUR",
@@ -128,14 +115,12 @@ export default function UserDashboardPage() {
     localStorage.setItem("kira:lowStockThreshold", String(threshold));
   }, [threshold]);
 
-  // mapeia a resposta da API para os nomes da UI
   const dash: DashboardData | undefined = useMemo(
     () =>
       apiData ? mapToDashboardData(apiData as ApiProductsDashboard) : undefined,
     [apiData]
   );
 
-  // capacity alvo (podes guardar isto em settings)
   const capacityTarget = useMemo(() => {
     const fromApi = dash?.summary.capacityTarget;
     if (typeof fromApi === "number" && fromApi > 0) return fromApi;
